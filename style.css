@@ -1,0 +1,115 @@
+:root {
+  --bg: #05060a;
+  --fg: #e8ecf4;
+  --muted: #8590a8;
+  --accent: #4ea1ff;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fullscreen canvas, pinned behind the scrolling content */
+#scene {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+/* Scrolling content sits above the canvas; sections are transparent
+   so the WebGL scene shows through. */
+#content {
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  pointer-events: none; /* let pointer reach the canvas */
+}
+
+/* Hero: title + tagline on the first panel */
+.hero {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(3.5rem, 16vw, 12rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 0.9;
+  text-shadow: 0 0 40px rgba(78, 161, 255, 0.25);
+}
+
+.tagline {
+  margin: 1rem 0 0;
+  font-size: clamp(1rem, 2.4vw, 1.6rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  max-width: 32ch;
+}
+
+/* Per-section caption, pinned to the upper corner of its panel */
+.caption {
+  margin-bottom: auto;
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+.caption-index {
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.caption-text {
+  font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+  color: var(--fg);
+}
+
+/* The hero panel centers its title and has no caption */
+.hero-panel { justify-content: center; }
+
+.scroll-hint {
+  position: fixed;
+  bottom: 1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  pointer-events: none;
+  animation: bob 2.4s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
+  50%      { transform: translateX(-50%) translateY(6px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint { animation: none; }
+}
