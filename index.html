@@ -14,45 +14,28 @@
     }
   </script>
 </head>
-<body>
-  <!-- Fixed fullscreen scene rendered behind the page content -->
+<body data-page="index">
+  <!-- Fixed fullscreen starfield behind the page content -->
   <canvas id="scene"></canvas>
 
-  <!-- Scroll-driven sections. A standalone hero leads, then one section per
-       GLB scene. The hero shows no model so the title stands alone; the launch
-       complex only appears once it's scrolled off screen. -->
   <main id="content">
     <section class="panel hero-panel">
       <div class="hero">
         <h1 class="title">APOLLO</h1>
         <p class="tagline">From the launch pad to the Sea of Tranquility.</p>
-      </div>
-    </section>
-
-    <section class="panel" data-scene="0">
-      <div class="caption">
-        <span class="caption-index">01</span>
-        <span class="caption-text">Saturn V — Launch Complex 39</span>
-      </div>
-    </section>
-
-    <section class="panel" data-scene="1">
-      <div class="caption">
-        <span class="caption-index">02</span>
-        <span class="caption-text">Rocketdyne F-1 — 1.5 million pounds of thrust</span>
-      </div>
-    </section>
-
-    <section class="panel" data-scene="2">
-      <div class="caption">
-        <span class="caption-index">03</span>
-        <span class="caption-text">Earthrise — 240,000 miles from home</span>
+        <div class="well well-intro">
+          <p>A short introduction to the project goes here — what the Apollo
+          programme was, what these models show, and how to move through the
+          pages. Replace this placeholder with the real intro copy.</p>
+        </div>
       </div>
     </section>
   </main>
 
-  <div class="scroll-hint" aria-hidden="true">scroll to explore ↓</div>
-
-  <script type="module" src="./main.js"></script>
+  <script type="module">
+    import { mountScene } from './scene.js';
+    mountScene(document.getElementById('scene'), null); // stars only
+  </script>
+  <script type="module" src="./chrome.js"></script>
 </body>
 </html>

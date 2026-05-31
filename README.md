@@ -1,18 +1,27 @@
 # apollo-spaceflight
 
-A no-build, scroll-driven [three.js](https://threejs.org/) homepage telling the Apollo story across three Blender-exported scenes. Pure ES modules loaded from a CDN via importmap — no bundler, no `node_modules`.
+A no-build [three.js](https://threejs.org/) site telling the Apollo story across several pages. Each page renders a starfield (and, on the story pages, one Blender-exported model) on a fixed canvas behind the content. Pure ES modules loaded from a CDN via importmap — no bundler, no `node_modules`.
 
-## The scenes
+## The pages
 
-The homepage is a single scrolling page with one full-height section per scene. Scrolling eases the camera between them, after a one-time cinematic fly-in on load.
+Six static pages, navigated by a shared header menu and prev/next buttons:
 
-| # | Section | Model |
-|---|---------|-------|
-| 01 | Saturn V on Launch Complex 39 | `models/saturn-v.glb` |
-| 02 | Rocketdyne F-1 engine | `models/f1-engine.glb` |
-| 03 | Earth & Moon (hyper-real) | `models/earth-moon.glb` |
+| Page | What's on it |
+|------|--------------|
+| `index.html` | Splash — APOLLO title + intro, over the stars |
+| `saturn-v.html` | Saturn V on Launch Complex 39 (`models/saturn 5.glb`) |
+| `f1-engine.html` | Rocketdyne F-1 engine (`models/Rockodyne.glb`) |
+| `earth-moon.html` | Earth & Moon (`models/Earth_1_12756.glb` + `models/moon.glb`) |
+| `gallery.html` | Grid of render images with a lightbox |
+| `making-of.html` | How it was done (prose + images) |
 
-Drop your `.glb` exports into `models/` with those filenames. If a file is missing, a labelled wireframe placeholder is shown so the page still renders. To add or reorder scenes, edit the `SCENES` array at the top of `main.js`.
+The 3D scenes self-orbit with a cinematic fly-in; Saturn V and the F-1 are drag-to-orbit / drag-to-zoom, and the Earth & Moon page switches body on click. If a model file is missing, a wireframe placeholder is shown so the page still renders.
+
+## Editing
+
+- **Scenes & models** — `scenes.js` (the `SCENES` map, keyed by page) holds filenames and per-scene framing. The engine that consumes it is `scene.js`.
+- **Navigation** — `chrome.js` (the `PAGES` array) defines page order, menu labels, and prev/next. To add a page, add an HTML file with a matching `<body data-page="…">` and a `PAGES` entry.
+- **Gallery images** — drop renders into `renders/` named to match `renders.js` (`render-01.jpg`, …), or edit `renders.js` to list your own filenames. Numbered placeholders show until the files exist.
 
 ## Local preview
 
@@ -30,11 +39,15 @@ Then open <http://localhost:8000>.
 2. **Settings → Pages → Build and deployment → Source: Deploy from a branch**, branch `main` / root.
 3. Served at `https://<user>.github.io/apollo-spaceflight/`.
 
-The `.nojekyll` file stops GitHub Pages from running Jekyll, so `models/*.glb` are served untouched.
+The `.nojekyll` file stops GitHub Pages from running Jekyll, so `models/*.glb` and `renders/*` are served untouched.
 
 ## Structure
 
-- `index.html` — entrypoint: importmap (unpkg Three.js CDN), fixed canvas, scroll sections
-- `main.js` — scene/camera/lights, GLB loading, scroll-driven camera, cinematic intro
-- `style.css` — dark space theme, fixed canvas behind scrolling content, title/tagline
-- `models/` — your `.glb` scene exports
+- `*.html` — one thin shell per page (importmap, canvas, content); shared chrome is injected by JS
+- `scene.js` — the three.js engine: `mountScene(canvas, config)` (stars, model loading, camera, intro)
+- `scenes.js` — scene/model configs, keyed by page
+- `chrome.js` — injects the shared header menu + prev/next nav
+- `gallery.js` / `renders.js` — gallery grid + lightbox, and the render manifest
+- `style.css` — dark space theme, fixed canvas, content wells, gallery, lightbox
+- `models/` — `.glb` exports and their loose textures (e.g. `models/earth/`)
+- `renders/` — gallery render images

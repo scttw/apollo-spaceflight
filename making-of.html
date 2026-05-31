@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Making Of — Apollo</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body data-page="making-of">
+  <canvas id="scene"></canvas>
+
+  <main id="content" class="scroll-page">
+    <article class="well well-wide prose">
+      <h1 class="page-title">How this was done</h1>
+      <p>An introduction to the process goes here — the tools, the workflow, the
+      reasoning. Replace this placeholder with the real write-up.</p>
+
+      <h2>Modelling</h2>
+      <p>Section copy placeholder. Describe how the models were built in Blender.</p>
+      <figure>
+        <img loading="lazy" src="renders/render-01.jpg" alt="Work-in-progress render"
+             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22900%22 height=%22500%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%230b0e16%22/%3E%3Crect x=%228%22 y=%228%22 width=%22884%22 height=%22484%22 fill=%22none%22 stroke=%22%232a3550%22 stroke-width=%222%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Helvetica,Arial%22 font-size=%2228%22 fill=%22%2356627d%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3Eimage%3C/text%3E%3C/svg%3E'" />
+        <figcaption>Caption placeholder.</figcaption>
+      </figure>
+
+      <h2>Texturing &amp; lighting</h2>
+      <p>Section copy placeholder. Describe the materials, maps, and the
+      sunlit-in-space lighting setup.</p>
+
+      <h2>Bringing it to the web</h2>
+      <p>Section copy placeholder. Describe the no-build three.js setup, the GLB
+      export pipeline, and the scroll/scene work.</p>
+    </article>
+  </main>
+
+  <script type="module">
+    import { mountScene } from './scene.js';
+    mountScene(document.getElementById('scene'), null); // stars only
+  </script>
+  <script type="module" src="./chrome.js"></script>
+</body>
+</html>

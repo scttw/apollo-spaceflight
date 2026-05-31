@@ -38,7 +38,8 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: clamp(1.5rem, 5vw, 4rem);
+  /* extra top/bottom clears the fixed header and prev/next footer */
+  padding: 5rem clamp(1.5rem, 5vw, 4rem) 6rem;
   pointer-events: none; /* let pointer reach the canvas */
 }
 
@@ -90,26 +91,183 @@ html, body {
 /* The hero panel centers its title and has no caption */
 .hero-panel { justify-content: center; }
 
-.scroll-hint {
+/* ---- Shared page chrome (header + prev/next), injected by chrome.js ---- */
+.site-header {
   position: fixed;
-  bottom: 1.4rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  font-size: 0.8rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1.5rem, 5vw, 3rem);
+  pointer-events: none; /* gaps stay click-through to the canvas */
+  background: linear-gradient(to bottom, rgba(5, 6, 10, 0.65), transparent);
+}
+.site-header a { pointer-events: auto; }
+
+.wordmark {
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-decoration: none;
+  color: var(--fg);
+  font-size: 1rem;
+}
+/* The giant hero title is the wordmark on the splash, so hide the small one */
+body[data-page="index"] .wordmark { visibility: hidden; }
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+.site-nav a {
+  text-decoration: none;
   color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+.site-nav a:hover { color: var(--fg); }
+.site-nav a.active { color: var(--accent); }
+
+.page-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1.5rem, 5vw, 3rem);
   pointer-events: none;
-  animation: bob 2.4s ease-in-out infinite;
-  transition: opacity 0.4s ease;
+  background: linear-gradient(to top, rgba(5, 6, 10, 0.65), transparent);
+}
+.page-nav a {
+  pointer-events: auto;
+  text-decoration: none;
+  color: var(--fg);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  background: rgba(5, 6, 10, 0.5);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 0.55rem 1.15rem;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.page-nav a:hover { color: var(--accent); border-color: var(--accent); }
+.page-nav .spacer { visibility: hidden; }
+
+/* ---- Content well: the dark mask that keeps text readable over stars ---- */
+.well {
+  pointer-events: auto;
+  background: rgba(5, 6, 10, 0.5);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  max-width: 52ch;
+}
+.well p { margin: 0.6rem 0 0; font-weight: 300; line-height: 1.6; }
+.well p:first-child { margin-top: 0; }
+.well-title { margin: 0; font-weight: 400; letter-spacing: 0.04em; font-size: clamp(1.2rem, 2.4vw, 1.6rem); }
+.well .hint { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.06em; }
+.well-intro { margin-top: 1.5rem; max-width: 46ch; }
+.well-wide { max-width: none; }
+
+/* On the story panels the well sits at the lower-left, not full width */
+.panel .well { align-self: flex-start; }
+
+/* ---- Scrolling content pages (gallery, making-of) ---- */
+.scroll-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem clamp(1.5rem, 5vw, 3rem) 7rem; /* clear fixed header/footer */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.page-title { margin: 0; font-weight: 700; letter-spacing: 0.08em; font-size: clamp(2rem, 6vw, 3.5rem); }
+
+.prose h2 { margin: 2rem 0 0.5rem; font-weight: 400; letter-spacing: 0.04em; }
+.prose figure { margin: 1.5rem 0 0; }
+.prose img { width: 100%; height: auto; border-radius: 10px; display: block; }
+.prose figcaption { margin-top: 0.5rem; color: var(--muted); font-size: 0.85rem; }
+
+/* ---- Gallery grid ---- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+.tile {
+  all: unset;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0b0e16;
+}
+.tile img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.tile:hover img { transform: scale(1.05); }
+.tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Lightbox ---- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 3, 6, 0.92);
+  backdrop-filter: blur(4px);
+}
+.lightbox[hidden] { display: none; }
+.lightbox-img {
+  max-width: 88vw;
+  max-height: 82vh;
+  border-radius: 6px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+}
+.lightbox button {
+  position: absolute;
+  background: rgba(5, 6, 10, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--fg);
+  cursor: pointer;
+  border-radius: 999px;
+  font-size: 1.4rem;
+  line-height: 1;
+  width: 3rem; height: 3rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.lightbox button:hover { color: var(--accent); border-color: var(--accent); }
+.lightbox-close { top: 1.2rem; right: 1.2rem; }
+.lightbox-prev { left: 1.2rem; top: 50%; transform: translateY(-50%); }
+.lightbox-next { right: 1.2rem; top: 50%; transform: translateY(-50%); }
+.lightbox-caption {
+  position: absolute;
+  bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
 }
 
-@keyframes bob {
-  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
-  50%      { transform: translateX(-50%) translateY(6px); opacity: 1; }
+@media (max-width: 640px) {
+  .site-header { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+  .site-nav { gap: 0.85rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scroll-hint { animation: none; }
+  .tile img { transition: none; }
 }

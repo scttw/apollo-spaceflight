@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F-1 Engine — Apollo</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body data-page="f1-engine">
+  <canvas id="scene"></canvas>
+
+  <main id="content">
+    <section class="panel">
+      <div class="caption">
+        <span class="caption-index">02</span>
+        <span class="caption-text">Rocketdyne F-1 — 1.5 million pounds of thrust</span>
+      </div>
+      <div class="well">
+        <h2 class="well-title">Five of these, side by side</h2>
+        <p>A text description of the Rocketdyne F-1 engine goes here. Replace this
+        placeholder with the real copy — thrust, the turbopump, the first stage.</p>
+        <p class="hint">Drag to orbit · drag up / down to zoom</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { mountScene } from './scene.js';
+    import { SCENES } from './scenes.js';
+    mountScene(document.getElementById('scene'), SCENES['f1-engine']);
+  </script>
+  <script type="module" src="./chrome.js"></script>
+</body>
+</html>

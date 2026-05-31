@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earth &amp; Moon — Apollo</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body data-page="earth-moon">
+  <canvas id="scene"></canvas>
+
+  <main id="content">
+    <section class="panel">
+      <div class="caption">
+        <span class="caption-index">03</span>
+        <span class="caption-text">Earthrise — 240,000 miles from home</span>
+      </div>
+      <div class="well">
+        <h2 class="well-title">Two worlds</h2>
+        <p>A text description of the Earth &amp; Moon scene goes here. Replace this
+        placeholder with the real copy — the journey, the distance, the view back.</p>
+        <p class="hint">Click to switch between the Earth and the Moon</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { mountScene } from './scene.js';
+    import { SCENES } from './scenes.js';
+    mountScene(document.getElementById('scene'), SCENES['earth-moon']);
+  </script>
+  <script type="module" src="./chrome.js"></script>
+</body>
+</html>
