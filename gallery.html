@@ -27,15 +27,6 @@
     <div class="gallery-grid" id="grid"></div>
   </main>
 
-  <!-- Lightbox overlay -->
-  <div class="lightbox" id="lightbox" hidden>
-    <button class="lightbox-close" type="button" aria-label="Close">×</button>
-    <button class="lightbox-prev" type="button" aria-label="Previous">←</button>
-    <img class="lightbox-img" alt="" />
-    <button class="lightbox-next" type="button" aria-label="Next">→</button>
-    <p class="lightbox-caption"></p>
-  </div>
-
   <script type="module">
     import { mountScene } from './scene.js';
     mountScene(document.getElementById('scene'), null); // stars only

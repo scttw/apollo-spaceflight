@@ -19,25 +19,185 @@
 
   <main id="content" class="scroll-page">
     <article class="well well-wide prose">
-      <h1 class="page-title">How this was done</h1>
-      <p>An introduction to the process goes here — the tools, the workflow, the
-      reasoning. Replace this placeholder with the real write-up.</p>
+      <h1 class="page-title">How this was made</h1>
+      <p class="lead">I wanted to tell the story of Apollo by rebuilding its icons
+      in 3D and letting you turn them over in your own browser. Four subjects
+      carry the whole programme: the Saturn V that left the pad, the Rocketdyne
+      F-1 engines that did the lifting, and the Earth and Moon at either end of
+      the journey. Every one was modelled from scratch in Blender, then brought
+      to the web with three.js. Here is how each came together.</p>
 
-      <h2>Modelling</h2>
-      <p>Section copy placeholder. Describe how the models were built in Blender.</p>
+      <h2>It started on paper</h2>
+      <p>Before any of it touched a computer, each subject began as a pencil
+      sketch — a way to settle the proportions, the camera angles, and what
+      actually needed to be built.</p>
+      <div class="figure-row">
+        <figure>
+          <img loading="lazy" src="screenshots/planning-sketch-saturn-v-and-f1-engine.webp"
+               alt="Pencil sketches of the Saturn V rocket and the F-1 engine" />
+          <figcaption>Planning sketches — the Saturn V and the F-1 engine.</figcaption>
+        </figure>
+        <figure>
+          <img loading="lazy" src="screenshots/planning-sketch-earth-moon.webp"
+               alt="Pencil sketch planning the Earth and Moon scene, annotated with notes on the atmosphere, clouds and lighting" />
+          <figcaption>Planning the Earth &amp; Moon scene, with notes on the
+          atmosphere, clouds and a black, star-free sky.</figcaption>
+        </figure>
+      </div>
+
+      <h2>Building the Saturn V</h2>
+      <p>Accuracy starts with good reference. I worked against a photograph of
+      the real rocket on the pad and an orthographic side-on diagram, lined up so
+      I could check the model's profile against the truth at every step.</p>
+      <div class="figure-row">
+        <figure>
+          <img loading="lazy" src="screenshots/reference-saturn-v-launchpad.webp"
+               alt="NASA photograph of the Saturn V rolling out to the launch pad" />
+          <figcaption>The Saturn V rolling out to the pad. <em>Reference photo: NASA.</em></figcaption>
+        </figure>
+        <figure>
+          <img class="pin" loading="lazy" src="screenshots/reference-saturn-v-diagram.webp"
+               alt="Orthographic side-on proportion diagram of the Saturn V" />
+          <figcaption>An orthographic diagram for proportions.</figcaption>
+        </figure>
+      </div>
+      <p>Almost every part grew from a single cylinder. A subdivision-surface
+      modifier smoothed it, then I extruded and shaped it into fuel tanks and
+      stages — creasing the edges I wanted to stay crisp. The fairing around the
+      lunar module was built as one quarter-panel and spun around its centre four
+      times to close the cone. The latticed launch tower came almost for free: a
+      Wireframe modifier turns the edges of a simple boxy shape into a full steel
+      truss. Materials stayed deliberately simple — just a colour, a roughness
+      (shiny vs. matte), and a metallic switch kept at fully-on or fully-off,
+      because no real material is half metal.</p>
       <figure>
-        <img loading="lazy" src="renders/render-01.jpg" alt="Work-in-progress render"
-             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22900%22 height=%22500%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%230b0e16%22/%3E%3Crect x=%228%22 y=%228%22 width=%22884%22 height=%22484%22 fill=%22none%22 stroke=%22%232a3550%22 stroke-width=%222%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Helvetica,Arial%22 font-size=%2228%22 fill=%22%2356627d%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3Eimage%3C/text%3E%3C/svg%3E'" />
-        <figcaption>Caption placeholder.</figcaption>
+        <img loading="lazy" src="renders/saturn-v.webp"
+             alt="Finished render of the Saturn V on the launch tower" />
+        <figcaption>The finished Saturn V on its tower.</figcaption>
       </figure>
 
-      <h2>Texturing &amp; lighting</h2>
-      <p>Section copy placeholder. Describe the materials, maps, and the
-      sunlit-in-space lighting setup.</p>
+      <h2>The F-1 engine</h2>
+      <p>Five of these 8.5-tonne engines powered the Saturn V's first stage. Again
+      I started from an orthographic illustration to keep the scale honest, then
+      leaned on three modelling tricks — each simple on its own, but combined in
+      complicated ways.</p>
+      <div class="figure-row">
+        <figure>
+          <img class="pin" loading="lazy" src="screenshots/reference-f1-engine.webp"
+               alt="Orthographic illustration of the Rocketdyne F-1 engine used as a modelling reference" />
+          <figcaption>The side-on reference illustration.</figcaption>
+        </figure>
+      </div>
+      <p><strong>Smoothed primitives</strong> — basic shapes plus a
+      subdivision-surface modifier and a few creased edges — gave me the big
+      forms: the engine bell, combustion chamber, valves and pumps.
+      <strong>Skinned paths</strong> handle every pipe and cable: a single point
+      is extruded into a line that traces the route, then a Skin modifier wraps it
+      in tubing and a second subdivision pass rounds it off. And
+      <strong>radial modelling</strong> — building one wedge and arraying it
+      around a centre — produced the gimbal arms, trusses, shock absorbers and the
+      turbine.</p>
+      <div class="figure-row">
+        <figure>
+          <img loading="lazy" src="screenshots/engine-clay-front.webp"
+               alt="Untextured clay render of the F-1 engine bell, chamber, valves and pumps" />
+          <figcaption>Smoothed primitives: bell, chamber, valves and pumps.</figcaption>
+        </figure>
+        <figure>
+          <img loading="lazy" src="screenshots/engine-clay-three-quarter.webp"
+               alt="Untextured clay render highlighting the engine's tubing and pipework" />
+          <figcaption>Skinned paths: the tubing and pipework.</figcaption>
+        </figure>
+        <figure>
+          <img loading="lazy" src="screenshots/engine-clay-low-angle.webp"
+               alt="Untextured clay render of the engine's gimbal trusses and turbine" />
+          <figcaption>Radial modelling: gimbal trusses and turbine.</figcaption>
+        </figure>
+      </div>
+      <figure>
+        <img loading="lazy" src="renders/rocketdyne-render.webp"
+             alt="Finished render of the Rocketdyne F-1 engine over its exhaust glow" />
+        <figcaption>The finished F-1 engine.</figcaption>
+      </figure>
+
+      <h2>Earth &amp; the Moon</h2>
+      <p>Both planet and moon are built on real data — NASA surface scans gathered
+      by probes and shuttle missions from the 1980s onward. The Moon is the
+      simpler of the two: a finely-divided sphere with NASA's colour map and a
+      bump map, the bump wired through a displacement node so it physically
+      reshapes the surface into real craters rather than just faking the shadows.
+      The world's background is set to a perfect black so it reads as space.</p>
+      <p>The Earth is layered. The surface combines a colour map, a displacement
+      map for terrain, and an ocean mask that makes water matte and land
+      reflective. Wrapped around it, a slightly larger shell becomes the
+      atmosphere — its transparency driven by a Fresnel effect so it's clear
+      overhead and thickens toward the horizon. A third, lower shell carries the
+      clouds, using a black-and-white cloud image to mix between fully transparent
+      and solid white.</p>
+      <div class="figure-row">
+        <figure>
+          <img loading="lazy" src="screenshots/shader-earth-surface-nodes.webp"
+               alt="Blender shader node graph for the Earth's surface material" />
+          <figcaption>Surface shader.</figcaption>
+        </figure>
+        <figure>
+          <img loading="lazy" src="screenshots/shader-atmosphere-nodes.webp"
+               alt="Blender shader node graph for the Earth's atmosphere" />
+          <figcaption>Atmosphere shader.</figcaption>
+        </figure>
+        <figure>
+          <img loading="lazy" src="screenshots/shader-clouds-nodes.webp"
+               alt="Blender shader node graph for the Earth's cloud layer" />
+          <figcaption>Cloud shader.</figcaption>
+        </figure>
+      </div>
+      <p>A single sun-style light — parallel rays, a faint yellow tint, roughly the
+      1000 watts of sunlight that reach Earth at any moment — lights the whole
+      scene. These are some of the frames it produced:</p>
+      <div class="figure-row">
+        <figure>
+          <img loading="lazy" src="renders/earth-render-sa.webp"
+               alt="Render of Earth showing the Americas with sunglint over the Caribbean" />
+          <figcaption>The Americas, sunglint over the Caribbean.</figcaption>
+        </figure>
+        <figure>
+          <img loading="lazy" src="renders/earth-render-sp.webp"
+               alt="Render of Earth with Australia near the terminator and sunglint off the Pacific" />
+          <figcaption>Australia at the terminator, the Pacific aglow.</figcaption>
+        </figure>
+        <figure>
+          <img loading="lazy" src="renders/earth-render-np.webp"
+               alt="Render of Earth centred on the North Pole" />
+          <figcaption>Over the North Pole.</figcaption>
+        </figure>
+      </div>
 
       <h2>Bringing it to the web</h2>
-      <p>Section copy placeholder. Describe the no-build three.js setup, the GLB
-      export pipeline, and the scroll/scene work.</p>
+      <p>The whole point was the interactive window — somewhere you could grab a
+      model and inspect it. That turned out to be the hardest part. The big
+      site-builders fought me: Squarespace paywalled the features I needed, and
+      Webflow was tough to edit once generated. So I went the other way and built
+      the site by hand in HTML, hosted free on GitHub Pages, with help from an AI
+      coding assistant. The 3D runs on <strong>three.js</strong>, a library for
+      showing models in the browser; each one is exported from Blender as a GLB
+      file and dropped into the page over a drifting starfield.</p>
+      <p>Getting there meant some debugging. The launch complex first loaded
+      zoomed too far out, so I added orbit-and-zoom controls. The F-1 engine
+      arrived almost perfectly, apart from one material showing up bright red that
+      needed correcting. The Earth was the real puzzle: its textures vanished on
+      export, because a GLB can only carry standard materials and my Earth was
+      painted with a custom shader stack the format couldn't bake in. The fix was
+      to display a NASA-made Earth GLB with its textures already embedded — while
+      every Earth image in the gallery is still a render straight from my own
+      model.</p>
+
+      <h2>What I took away</h2>
+      <p>Rebuilding these machines was the best way to understand them — the
+      lesser-known F-1 engine especially, whose story I only learned by modelling
+      every pipe. I came away with a sharper feel for staying organised across
+      hundreds of separate meshes, a healthy respect for the limits of 3D in a
+      browser, and a quieter appreciation for the Earth itself: seen from orbit,
+      with no borders, no cities and no lights — just a fragile blue world.</p>
     </article>
   </main>
 
@@ -45,6 +205,7 @@
     import { mountScene } from './scene.js';
     mountScene(document.getElementById('scene'), null); // stars only
   </script>
+  <script type="module" src="./making-of.js"></script>
   <script type="module" src="./chrome.js"></script>
 </body>
 </html>

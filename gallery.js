@@ -1,10 +1,11 @@
 // ---------------------------------------------------------------------------
-// Gallery grid + lightbox. Builds a square-tile grid from the render manifest
-// and opens a fullscreen overlay on click (arrow keys / on-screen buttons step
-// through, Esc or a backdrop click closes). Missing image files fall back to a
-// numbered placeholder so the page is reviewable before the renders land.
+// Gallery grid. Builds a square-tile grid from the render manifest; clicking a
+// tile opens the shared fullscreen lightbox (see lightbox.js). Missing image
+// files fall back to a numbered placeholder so the page is reviewable before
+// the renders land.
 // ---------------------------------------------------------------------------
 import { RENDERS } from './renders.js';
+import { createLightbox } from './lightbox.js';
 
 const grid = document.getElementById('grid');
 
@@ -24,6 +25,12 @@ function placeholder(label) {
   </svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
+
+// The lightbox shows full-size renders, falling back to the numbered placeholder
+// if an original is missing.
+const { open } = createLightbox(RENDERS, {
+  onMissing: (idx) => placeholder(String(idx + 1).padStart(2, '0')),
+});
 
 RENDERS.forEach((render, idx) => {
   const button = document.createElement('button');
@@ -46,46 +53,4 @@ RENDERS.forEach((render, idx) => {
   button.appendChild(img);
   button.addEventListener('click', () => open(idx));
   grid.appendChild(button);
-});
-
-// -------------------------------------------------------------------------
-// Lightbox
-// -------------------------------------------------------------------------
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = lightbox.querySelector('.lightbox-img');
-const caption = lightbox.querySelector('.lightbox-caption');
-let activeIndex = 0;
-
-function show(idx) {
-  activeIndex = (idx + RENDERS.length) % RENDERS.length;
-  const render = RENDERS[activeIndex];
-  lightboxImg.alt = render.alt;
-  lightboxImg.src = render.src;
-  lightboxImg.onerror = () => { lightboxImg.src = placeholder(String(activeIndex + 1).padStart(2, '0')); };
-  caption.textContent = render.alt;
-}
-
-function open(idx) {
-  show(idx);
-  lightbox.hidden = false;
-  document.body.style.overflow = 'hidden';
-}
-
-function close() {
-  lightbox.hidden = true;
-  document.body.style.overflow = '';
-}
-
-lightbox.querySelector('.lightbox-prev').addEventListener('click', () => show(activeIndex - 1));
-lightbox.querySelector('.lightbox-next').addEventListener('click', () => show(activeIndex + 1));
-lightbox.querySelector('.lightbox-close').addEventListener('click', close);
-
-// Click outside the image (on the backdrop) closes.
-lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
-
-document.addEventListener('keydown', (e) => {
-  if (lightbox.hidden) return;
-  if (e.key === 'Escape') close();
-  else if (e.key === 'ArrowLeft') show(activeIndex - 1);
-  else if (e.key === 'ArrowRight') show(activeIndex + 1);
 });
