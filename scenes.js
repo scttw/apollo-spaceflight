@@ -28,9 +28,17 @@ export const SCENES = {
 
   'earth-moon': {
     name: 'Earth & Moon',
-    focus: true,            // click switches which body the camera frames; it sits
-    distance: 2.0,          // in high orbit while the body rotates underneath it
-    height: 0.8,            // (distance/height scale with the focused body's size)
+    focus: true,            // click switches which world is framed; drag orbits +
+    distance: 1.8,          // zooms, and the body self-rotates under a fixed sun
+    height: 0.25,           // (distance/height scale with the focused body's size)
+    zoomStart: 1, zoomMin: 0.55, zoomMax: 1.8,
+    // A single warm sun + low ambient gives a clean day/night terminator; the
+    // body turns under it so the surface scrolls past a fixed terminator. The sun
+    // sits ~23° above the equatorial plane — Earth's axial tilt — so it lights
+    // the bodies from near the side (not overhead) and the terminator runs
+    // roughly pole-to-pole. Swing it around the equator by trading X for Z.
+    sun: { position: [4.5, 2.4, 3.5], intensity: 2.6 },
+    ambient: 0.05,
     bodies: [
       {
         // Earth_1_12756.glb ships embedded diffuse + normal maps, so the surface

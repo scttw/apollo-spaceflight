@@ -28,14 +28,24 @@ export function mountScene(canvas, cfg = null) {
 
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
 
-  // Soft fill + strong key for that hard, sunlit-in-space look.
-  scene.add(new THREE.AmbientLight(0xffffff, 0.12));
-  const keyLight = new THREE.DirectionalLight(0xffffff, 3.0);
-  keyLight.position.set(5, 4, 6);
-  scene.add(keyLight);
-  const rimLight = new THREE.DirectionalLight(0x4ea1ff, 1.0);
-  rimLight.position.set(-6, 2, -4);
-  scene.add(rimLight);
+  // Lighting. Most scenes use a soft fill + strong key (and a cool rim) for that
+  // hard, sunlit-in-space hardware look. Scenes that want a clean day/night
+  // terminator (Earth & Moon) opt into a single warm "sun" with minimal ambient
+  // via cfg.sun, so the unlit side stays genuinely dark.
+  if (cfg?.sun) {
+    scene.add(new THREE.AmbientLight(0xffffff, cfg.ambient ?? 0.05));
+    const sun = new THREE.DirectionalLight(0xfff4e6, cfg.sun.intensity ?? 2.6);
+    sun.position.set(...cfg.sun.position);
+    scene.add(sun);
+  } else {
+    scene.add(new THREE.AmbientLight(0xffffff, 0.12));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.0);
+    keyLight.position.set(5, 4, 6);
+    scene.add(keyLight);
+    const rimLight = new THREE.DirectionalLight(0x4ea1ff, 1.0);
+    rimLight.position.set(-6, 2, -4);
+    scene.add(rimLight);
+  }
 
   // The model(s) for this page live in one group (always visible).
   const group = new THREE.Group();
@@ -56,8 +66,9 @@ export function mountScene(canvas, cfg = null) {
         }
       );
     });
-    // Interactive scenes track their own dolly; focus scenes start on body 0.
-    if (cfg.interactive) cfg.zoom = cfg.zoomStart ?? (cfg.zoomMin + cfg.zoomMax) / 2;
+    // Interactive and focus scenes both track a dolly; focus scenes also start
+    // framing body 0 (a click advances to the next).
+    if (cfg.interactive || cfg.focus) cfg.zoom = cfg.zoomStart ?? (cfg.zoomMin + cfg.zoomMax) / 2;
     if (cfg.focus) cfg.focusBody = 0;
   }
 
@@ -68,29 +79,43 @@ export function mountScene(canvas, cfg = null) {
   // page content sits above the canvas and would otherwise swallow them).
   // -------------------------------------------------------------------------
   let dragging = false;
+  let moved = false;
   let lastDrag = { x: 0, y: 0 };
+  let downAt = { x: 0, y: 0 };
   let azimuth = 0;
 
   const setCursor = () => {
-    document.body.style.cursor = cfg?.interactive ? (dragging ? 'grabbing' : 'grab')
-      : cfg?.focus ? 'pointer' : '';
+    document.body.style.cursor = (cfg?.interactive || cfg?.focus)
+      ? (dragging ? 'grabbing' : 'grab') : '';
   };
 
   if (cfg?.interactive || cfg?.focus) {
     window.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
-      if (cfg.focus) { cfg.focusBody = (cfg.focusBody + 1) % cfg.bodies.length; return; }
       dragging = true;
+      moved = false;
+      downAt = { x: e.clientX, y: e.clientY };
       lastDrag = { x: e.clientX, y: e.clientY };
       setCursor();
     });
     window.addEventListener('pointermove', (e) => {
       if (!dragging) return;
+      // Past a small threshold it counts as a drag (orbit + dolly), not a click.
+      if (Math.abs(e.clientX - downAt.x) + Math.abs(e.clientY - downAt.y) > 6) moved = true;
       azimuth -= (e.clientX - lastDrag.x) * ORBIT_SPEED;
-      cfg.zoom = THREE.MathUtils.clamp(cfg.zoom + (e.clientY - lastDrag.y) * ZOOM_SPEED, cfg.zoomMin, cfg.zoomMax);
+      if (cfg.zoomMin !== undefined) {
+        cfg.zoom = THREE.MathUtils.clamp(cfg.zoom + (e.clientY - lastDrag.y) * ZOOM_SPEED, cfg.zoomMin, cfg.zoomMax);
+      }
       lastDrag = { x: e.clientX, y: e.clientY };
     });
-    window.addEventListener('pointerup', () => { dragging = false; setCursor(); });
+    const release = () => {
+      // A click (press with no real drag) advances a focus scene to the next
+      // body; on interactive scenes it does nothing.
+      if (dragging && !moved && cfg.focus) cfg.focusBody = (cfg.focusBody + 1) % cfg.bodies.length;
+      dragging = false;
+      setCursor();
+    };
+    window.addEventListener('pointerup', release);
     window.addEventListener('pointercancel', () => { dragging = false; setCursor(); });
     setCursor();
   }
@@ -116,14 +141,23 @@ export function mountScene(canvas, cfg = null) {
     );
   }
 
-  // Park the camera in high orbit over the focused body, looking down while it
-  // spins underneath. Distance/height scale with the body's size so a click
-  // glides the camera across to the (smaller) Moon and it still fills the frame.
-  function focusFraming() {
+  // Frame the focused body head-on and orbit it. Azimuth swings the camera
+  // around the body — with a world-fixed sun that sweeps the terminator across
+  // the disc — and cfg.zoom dollies in/out. Distance/height scale with the
+  // body's size so a click glides across to the (smaller) Moon and it still
+  // fills the frame. During the intro the camera eases in from further out / up.
+  function focusFraming(intro) {
     const body = cfg.bodies[cfg.focusBody];
     const s = body.scale ?? 1;
     const look = new THREE.Vector3(...body.position);
-    const position = look.clone().add(new THREE.Vector3(0, cfg.height * s, cfg.distance * s));
+    const introT = Math.min(introElapsed / INTRO_DURATION, 1);
+    const ease = 1 - Math.pow(1 - introT, 3); // easeOutCubic
+    const base = cfg.distance * s * (cfg.zoom ?? 1);
+    const distance = intro ? THREE.MathUtils.lerp(base * 3, base, ease) : base;
+    const height = cfg.height * s + (intro ? THREE.MathUtils.lerp(1.0, 0, ease) : 0);
+    const position = look.clone().add(
+      new THREE.Vector3(Math.sin(azimuth) * distance, height, Math.cos(azimuth) * distance)
+    );
     return { position, look };
   }
 
@@ -146,11 +180,13 @@ export function mountScene(canvas, cfg = null) {
     const intro = introElapsed < INTRO_DURATION;
 
     let target, lookTarget;
-    if (cfg.focus && !intro) {
-      // Bodies self-rotate; the camera sits over the focused one (eases across
-      // on a click). During the intro this falls through to the orbit path.
-      group.children.forEach((c) => { c.rotation.y += dt * (c.userData.spin || 0); });
-      const framing = focusFraming();
+    if (cfg.focus) {
+      // The focused body self-rotates so its surface scrolls past the fixed
+      // terminator — the "default orbit" that keeps going when you're not
+      // dragging. The camera holds its azimuth until you drag. Spin pauses
+      // during the intro so the fly-in stays stable.
+      if (!intro) group.children.forEach((c) => { c.rotation.y += dt * (c.userData.spin || 0); });
+      const framing = focusFraming(intro);
       target = framing.position;
       lookTarget = framing.look;
     } else if (cfg.interactive) {
