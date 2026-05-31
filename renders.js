@@ -10,10 +10,12 @@
 // ---------------------------------------------------------------------------
 export const RENDERS = [
   { src: 'renders/saturn-v.webp',          alt: 'Saturn V on the launch tower at Launch Complex 39' },
+  { src: 'renders/launch.webp',            alt: 'Saturn V lit on the launch tower at night, a glow building beneath the engines' },
   { src: 'renders/rocketdyne-render.webp', alt: 'Rocketdyne F-1 engine hovering over its exhaust glow' },
   { src: 'renders/engine.webp',            alt: 'F-1 engine at dusk' },
   { src: 'renders/earth-render.webp',      alt: 'Earth from low orbit, a close pass over Europe, Spain and the Mediterranean with cloud banks over the Atlantic' },
   { src: 'renders/earth-render-np.webp',   alt: 'Earth centred on the North Pole, the Arctic ice cap surrounded by the northern continents' },
   { src: 'renders/earth-render-sp.webp',   alt: 'Earth from orbit with Australia near the terminator and sunglint flaring off the Pacific' },
   { src: 'renders/earth-render-sa.webp',   alt: 'Earth showing the Americas, from North America down to the tip of South America, with sunglint over the Caribbean' },
+  { src: 'renders/earthrise.webp',         alt: 'Earthrise — Earth as a crescent above the cratered lunar horizon' },
 ];
