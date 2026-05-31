@@ -1,2 +1,17 @@
 .DS_Store
 node_modules/
+
+# Shell scripts (local tooling) — but keep the gallery thumbnail generator,
+# since the README/gallery workflow depends on it.
+*.sh
+!make-thumbs.sh
+
+# Blender working/backup files (the repo only tracks exported .glb)
+*.blend
+*.blend[0-9]
+
+# Local backup copies (e.g. pre-edit .glb snapshots)
+*.bak
+
+# OneDrive sync-conflict copies
+*-safeBackup-*

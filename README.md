@@ -21,7 +21,7 @@ The 3D scenes self-orbit with a cinematic fly-in; Saturn V and the F-1 are drag-
 
 - **Scenes & models** — `scenes.js` (the `SCENES` map, keyed by page) holds filenames and per-scene framing. The engine that consumes it is `scene.js`.
 - **Navigation** — `chrome.js` (the `PAGES` array) defines page order, menu labels, and prev/next. To add a page, add an HTML file with a matching `<body data-page="…">` and a `PAGES` entry.
-- **Gallery images** — drop renders into `renders/` named to match `renders.js` (`render-01.jpg`, …), or edit `renders.js` to list your own filenames. Numbered placeholders show until the files exist.
+- **Gallery images** — drop renders into `renders/` (`.webp`/`.jpg`/`.png`) and list each in `renders.js` with its alt text. Then run `./make-thumbs.sh` (needs ImageMagick) to build the square grid thumbnails in `renders/thumb/`; the lightbox uses the full-size originals. Commit both. Numbered placeholders show until the files exist.
 
 ## Local preview
 
@@ -48,6 +48,7 @@ The `.nojekyll` file stops GitHub Pages from running Jekyll, so `models/*.glb` a
 - `scenes.js` — scene/model configs, keyed by page
 - `chrome.js` — injects the shared header menu + prev/next nav
 - `gallery.js` / `renders.js` — gallery grid + lightbox, and the render manifest
+- `make-thumbs.sh` — generates the square gallery thumbnails (ImageMagick)
 - `style.css` — dark space theme, fixed canvas, content wells, gallery, lightbox
 - `models/` — `.glb` exports and their loose textures (e.g. `models/earth/`)
 - `renders/` — gallery render images

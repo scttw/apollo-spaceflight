@@ -43,7 +43,10 @@ Six static HTML pages, in linear order: `index.html` (splash), `saturn-v.html`, 
 
 ## Gallery (`gallery.js` + `renders.js`)
 
-`renders.js` is the **render manifest** (`RENDERS`: an array of `{ src, alt }`), shared by the gallery grid and the making-of page; it currently generates 24 numbered defaults (`renders/render-NN.jpg`). `gallery.js` builds a square-tile grid and a lightbox (arrow keys / on-screen buttons step through, Esc or backdrop click closes). **Missing image files fall back to an inline numbered SVG placeholder**, so the gallery is reviewable before the real renders land — drop files into `renders/` matching the manifest, or edit `renders.js` to list real filenames.
+`renders.js` is the **render manifest** (`RENDERS`: an array of `{ src, alt }`), shared by the gallery grid and the making-of page (currently the seven `.webp` exports in `renders/`). `gallery.js` builds a square-tile grid and a lightbox (arrow keys / on-screen buttons step through, Esc or backdrop click closes).
+
+- **Thumbnails are pre-generated, not done in the browser.** The grid loads a square thumb derived from each `src` (`renders/foo.webp` → `renders/thumb/foo.webp`, via `thumbFor()` — extension preserved); the lightbox loads the full-size original. `make-thumbs.sh` (ImageMagick `mogrify`) builds `renders/thumb/` as 600×600 centre-crops from any `.jpg`/`.jpeg`/`.png`/`.webp` source, skipping up-to-date files. **Both the originals and the generated thumbs must be committed** — GitHub Pages serves them as-is, there is no build step. Run it after adding/replacing renders.
+- **Grid fallback chain: thumb → full-size → numbered SVG placeholder** (`gallery.js`). So tiles still render if thumbs haven't been generated (just heavier), and the gallery stays reviewable before any real renders land. Drop files into `renders/` matching the manifest, or edit `renders.js` to list real filenames.
 
 ## Styling
 
