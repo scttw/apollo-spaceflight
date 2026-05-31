@@ -13,6 +13,10 @@ export const SCENES = {
     file: './models/saturn%205.glb',
     distance: 2.4, height: 0.15, spin: 0.04,
     interactive: true, zoomMin: 0.10, zoomMax: 0.5, zoomStart: 0.266,
+    // A green ground plane parked at the base of the stack, large enough to read
+    // as ground to the horizon — hides the unfinished underside of the model.
+    // `offset` raises it from the bbox bottom up to the foot of the light posts.
+    ground: { color: 0x3a7d44, offset: 0.03 },
   },
 
   'f1-engine': {

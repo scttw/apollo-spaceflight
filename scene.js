@@ -44,7 +44,7 @@ export function mountScene(canvas, cfg = null) {
   if (cfg) {
     const loader = new GLTFLoader();
     // A single-file scene is just a one-body scene.
-    const bodies = cfg.bodies ?? [{ name: cfg.name, file: cfg.file }];
+    const bodies = cfg.bodies ?? [{ name: cfg.name, file: cfg.file, ground: cfg.ground }];
     bodies.forEach((body) => {
       loader.load(
         body.file,
@@ -254,6 +254,32 @@ function addModel(group, object, body = {}, renderer) {
 
   object.userData.spin = body.spin ?? 0;
   group.add(object);
+
+  // Optional ground plane, parked at the base of the placed model to hide its
+  // unfinished underside (e.g. the Saturn V stack).
+  if (body.ground) addGround(group, object, body.ground);
+}
+
+// A large flat plane sitting at the bottom of the model's bounding box. It's
+// sized well beyond the view (default 500 units) so its edges never appear —
+// it reads as ground meeting the horizon. A tiny downward nudge avoids
+// z-fighting with the model's lowest faces.
+function addGround(group, object, opts = {}) {
+  const box = new THREE.Box3().setFromObject(object);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = opts.size ?? 500;
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(size, size),
+    new THREE.MeshStandardMaterial({
+      color: new THREE.Color(opts.color ?? 0x3a7d44),
+      roughness: 1,
+      metalness: 0,
+      side: THREE.DoubleSide,
+    })
+  );
+  plane.rotation.x = -Math.PI / 2; // lay it flat (normal points up)
+  plane.position.set(center.x, box.min.y + (opts.offset ?? -0.01), center.z);
+  group.add(plane);
 }
 
 // Build cloud / atmosphere shells for a body and parent them to its surface (so
